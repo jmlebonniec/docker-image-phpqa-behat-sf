@@ -1,0 +1,48 @@
+phpqa:
+    analyzedDirs: ./src,./tests
+    buildDir: build/
+    ignoredDirs: vendor
+    ignoredFiles: ""
+    report: true
+    output: file
+    execution: parallel
+    tools: phpmetrics:0,phploc:0,phpcs:0,php-cs-fixer:0,phpmd:0,pdepend:0,phpcpd:0,security-checker:0,phpstan:0
+    verbose: false
+    extensions:
+        - php
+
+phpcs:
+    standard: PSR2
+    # can be overriden by CLI: phpqa --tools phpcs:1
+    allowedErrorsCount: 0
+    # number of allowed errors is compared with warnings+errors, or just errors from checkstyle.xml
+    ignoreWarnings: true
+    lineLimit: 300
+    # https://github.com/squizlabs/PHP_CodeSniffer/wiki/Reporting
+    reports:
+        cli:
+        - full
+        file:
+            # checkstyle is always included and overriden
+            checkstyle: checkstyle.xml
+            # you can include custom reports (https://github.com/wikidi/codesniffer/blob/master/reports/wikidi/Summary.php#L39)
+            # ./vendor/owner/package/src/MySummaryReport.php: phpcs-summary.html
+
+php-cs-fixer:
+    allowedErrorsCount: null
+    # http://cs.sensiolabs.org/#usage
+    rules: '@Symfony'
+    allowRiskyRules: false
+    # by default the tool is runned in dry-run mode (no fixers are applied)
+    isDryRun: true
+    # alternatively you can define path to your .phpcs_file (rules/allowRiskyRules config is ignored)
+    config: .php_cs.dist
+
+phpmd:
+    allowedErrorsCount: 0
+    standard: phpmd.xml
+
+phpstan:
+    allowedErrorsCount: null
+    level: max
+    standard: phpstan.neon

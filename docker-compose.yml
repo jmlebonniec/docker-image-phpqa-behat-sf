@@ -1,0 +1,75 @@
+version: '3.7'
+services:
+    traefik:
+        image: traefik:1.7
+        container_name: sfdocker
+        command: --docker --docker.exposedbydefault=false
+        ports:
+            - "80:80"
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+            - ./docker/traefik/traefik.toml:/traefik.toml:ro
+        networks:
+            - sfdocker
+
+    sfdocker-front:
+        image: thecodingmachine/php:7.3-v2-apache-node8
+        container_name: sfdocker-front
+        labels:
+        - traefik.enable=true
+        - traefik.backend=front
+        - traefik.frontend.rule=Host:${HOST_SFDOCKER}
+        - traefik.port=80
+        volumes:
+        - ./:/var/www/html:cached
+        environment:
+#            STARTUP_COMMAND_1: yarn encore dev --watch &
+            APACHE_DOCUMENT_ROOT: ./public
+            PHP_EXTENSION_XSL: 1
+            PHP_INI_MEMORY_LIMIT: 1g
+        networks:
+            - sfdocker
+
+    sfdocker-mariadb:
+        image: mariadb
+        container_name: sfdocker-db
+        ports:
+            - "3306:3306"
+        volumes:
+        - ../dump:/var/dump
+        - mysql_data:/var/lib/mysql
+        environment:
+            MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+            MYSQL_DATABASE: customer_area
+        command:
+            'mysqld --innodb-flush-method=fsync'
+        networks:
+            - sfdocker
+
+    sfdocker-mailer:
+        image: mailhog/mailhog
+        container_name: sfdocker-mailer
+        labels:
+            - traefik.enable=true
+            - traefik.backend=mailer
+            - traefik.frontend.rule=Host:${HOST_MAILER}
+            - traefik.port=8025
+        networks:
+            - sfdocker
+
+    sfdocker-selenium-testing:
+        image: selenium/standalone-chrome:3.11
+        container_name: sfdocker-selenium-testing
+        volumes:
+        - /dev/shm:/dev/shm
+        networks:
+            - sfdocker
+
+volumes:
+    mysql_data:
+        driver: local
+
+networks:
+    sfdocker:
+        name: sfdocker
+        driver: bridge

@@ -1,0 +1,29 @@
+default:
+    translation:
+        locale: en
+    extensions:
+        Behat\MinkExtension:
+            base_url: "http://ec-front"
+            sessions:
+                symfony:
+                    symfony: ~
+            goutte:
+                guzzle_parameters:
+                    verify: false
+            selenium2:
+                wd_host: 'http://ec-selenium-testing:4444/wd/hub'
+                capabilities:
+                    marionette: null
+            browser_name: chrome
+        FriendsOfBehat\SymfonyExtension:
+            kernel:
+                environment: test
+    suites:
+        default:
+            contexts:
+                - Behat\MinkExtension\Context\MinkContext
+                - Behatch\Context\DebugContext:
+                      screenshotDir: 'build'
+
+            paths:
+                - '%paths.base%/features'
