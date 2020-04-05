@@ -1,5 +1,6 @@
 {
     "type": "project",
+    "name": "jmlebonniec/docker-image-phpqa-behat-sf",
     "license": "proprietary",
     "require": {
         "php": "^7.1.3",
