@@ -6,18 +6,26 @@ For docker-compose: follow the install instruction here: https://docs.docker.com
 
 ## After install source project
 ```
-git clone git@bitbucket.org:jmlebonniec/symfony-docker.git
+composer create-project jmlebonniec/docker-image-phpqa-behat-sf your-project-name
 ```
 
 Add in your host the host:
 ```
-127.0.0.1 sfdocker.local
-127.0.0.1 sfdocker-mailer.local
+127.0.0.1 {your-name-project}.local
+127.0.0.1 mailer.{your-name-project}.local
+127.0.0.1 mariadb.{your-name-project}.local
 ```
-
 In the project folder, copy .env.template to .env
+
+Be attentive to replace correctly {your-name-project} with your project name!!!
+
+Replace sfdocker terms with your own reference (project name for example) in the docker-compose.yml
+
+```
+composer install
+```
 
 You can start docker with command
 ```
-docker-composer up -d
+docker-compose up -d
 ```
